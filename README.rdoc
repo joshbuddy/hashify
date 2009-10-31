@@ -1,0 +1,47 @@
+= Hashify
+
+Utterly simple hash creation for the your favorite objects
+
+== Usage
+
+  class Person
+    include Hashify
+    
+    attr_accessor :name, :address, :date_of_birth
+    hash_accessor :name, :address
+  end
+  
+  >> p = Person.new
+  >> p.name = 'my name'
+  >> p.address = 'my address'
+  >> p.to_hash
+  => {:name=>"my name", :address=>"my address"}
+  
+What about that pesky dob?
+
+  class Person
+    hash_convert :date_of_birth => Hashify::Convert::Time
+  end
+  
+  >> p.date_of_birth = Time.local(2000, "jan", 1, 0, 0, 0)
+  >> p.to_hash
+  => {:date_of_birth=>946702800, :name=>"my name", :address=>"my address"}
+  
+How we have these beautiful hashes, lets get a person back out of it.
+
+  >> Person.from_hash(:date_of_birth=>946702800, :name=>"my name", :address=>"my address")
+  => #<Person:0x10187b660 @date_of_birth=Sat Jan 01 00:00:00 -0500 2000, @address="my address", @name="my name">
+
+For bonus points, lets do json too
+
+  class Person
+    include Hashify::Json
+  end
+  
+  >> p.to_json
+  => "{\"address\":\"my address\",\"date_of_birth\":946702800,\"name\":\"my name\"}"
+  
+And of course,
+
+  >> Person.from_json("{\"address\":\"my address\",\"date_of_birth\":946702800,\"name\":\"my name\"}")
+  => #<Person:0x101809150 @date_of_birth=Sat Jan 01 00:00:00 -0500 2000, @address="my address", @name="my name">
