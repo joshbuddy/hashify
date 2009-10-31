@@ -3,8 +3,6 @@ module Hashify
   autoload :Json, File.join(File.dirname(__FILE__), 'hashify', 'json')
   autoload :Convert, File.join(File.dirname(__FILE__), 'hashify', 'convert')
   
-  include Convert
-  
   def self.included(cls)
     
     cls.const_set(:HashConvertTable, {}) unless cls.const_defined?(:HashConvertTable)
