@@ -1,7 +1,8 @@
 module Hashify
 
-  autoload :Json, File.join(File.dirname(__FILE__), 'hashify', 'json')
+  autoload :Json,    File.join(File.dirname(__FILE__), 'hashify', 'json')
   autoload :Convert, File.join(File.dirname(__FILE__), 'hashify', 'convert')
+  autoload :Auto,    File.join(File.dirname(__FILE__), 'hashify', 'auto')
   
   def self.included(cls)
     
