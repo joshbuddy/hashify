@@ -25,9 +25,17 @@ module Hashify
       convert_map = assembled_hash_convert
       instance = new
       map.each do |name, val|
-        convert_map[name.to_sym] ? 
-          instance.send((name.to_s + '=').to_sym, convert_map[name.to_sym].last.call(val)) :
+        if converter = convert_map[name.to_sym]
+          converted_val = case converter.last.arity
+          when 1: convert_map[name.to_sym].last.call(val)          
+          when 2: convert_map[name.to_sym].last.call(val, instance)
+          else
+            raise 'arity must be 1 or 2'
+          end
+          instance.send((name.to_s + '=').to_sym, converted_val)
+        else
           instance.send((name.to_s + '=').to_sym, val)
+        end
       end
       instance
     end
@@ -46,9 +54,16 @@ module Hashify
   
   def to_hash
     self.class.assembled_hash_convert.inject({}) do |hash, (name, converter)|
-      converter ? 
-        hash[name] = converter.first.call(self.send(name)) :
+      if converter
+        hash[name] = case converter.first.arity
+        when 1: converter.first.call(self.send(name))
+        when 2: converter.first.call(self.send(name), self)
+        else
+          raise 'arity must be 1 or 2'
+        end
+      else
         hash[name] = self.send(name)
+      end
       hash
     end
   end
